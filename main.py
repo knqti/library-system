@@ -3,11 +3,6 @@ import datetime
 import os
 
 
-# Get directory and file
-current_directory = os.path.dirname(os.path.abspath(__file__))
-library_file = os.path.join(current_directory, 'library.csv')
-
-
 def display_books(library_file):
     with open(library_file, 'r') as file:
         reader = csv.reader(file)
@@ -21,58 +16,70 @@ def display_books(library_file):
             print(f'{index:<5} | {row[0][:20]:<20} | {row[1][:20]:<20} | {row[2][:20]:<20}| {row[3]:<8} | {row[4]:<10} | {row[5]:<10}')
 
 
-def check_out_confirmation():
+def check_out_confirmation(library_file):
     while True:
 
         with open(library_file, 'r') as file:
             reader = csv.reader(file)
 
-            user_check_out = input('\n>>> Type the Index number and press enter to check out: ')
-            print(f'selected {user_check_out}')
+            user_check_out = input('\n>>> Select the Index number to check out (x to main menu): ').strip()
 
             for index, row in enumerate(reader):
-                print('looping...')
 
-                if index == int(user_check_out):
+                if user_check_out == 'x':
+                    # Exit function
+                    print('Exiting...')
+                    return user_check_out
+            
+                elif index == int(user_check_out):
                     print(f'\nYou want to check out:')
                     print(f'{row[2]} by {row[0]}, {row[1]}')
 
-                    user_confirm = input('>>> Is this correct? (y/n): ')
+                    user_confirm = input('>>> Is this correct? (y/n): ').strip().lower()
 
                     if user_confirm == 'y':
-                        # break out of function
-                        return
+                        # Exit function
+                        print('Confirmed!')
+                        return user_check_out
+                    
                     elif user_confirm == 'n':
-                        print('user selected "n"')
-                        # start again
+                        # Restart confirmation
                         break
+
                     else:
                         print('error')
-                        break
+                        # NEED SOME WAY TO CATCH ERRORS
+                        # err_msg = 'Invalid choice. Please try again.\nTo check out a book, type its Index number and press enter.\nTo go back to the main menu, type "x" and press enter.'
 
 
-def check_out_book():
-    check_out_confirmation()
+def check_out_book(library_file):
+    confirmation = check_out_confirmation(library_file)
     
     print('now in check_out_book()')
+    print(f'user selected: {confirmation}')
 
 
 
 def main():
+
+    # Get directory and file
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    library_file = os.path.join(current_directory, 'library.csv')
+
     # Main menu
-    print('\n== Library Checkout System ==')
+    print('\n== Library Main Menu ==')
     print('1. Display books')
     print('2. Check out book')
     print('3. Return book')
     print('4. Exit')
     
-    user_navigation = input('>>> Type a number and press enter to choose: ')
+    user_navigation = input('>>> Select a number to navigate: ').strip()
 
     if user_navigation == '1':
-        display_books()
+        display_books(library_file)
 
     elif user_navigation == '2':
-        check_out_book()
+        check_out_book(library_file)
 
     elif user_navigation == '3':
         # function
