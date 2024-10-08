@@ -7,16 +7,19 @@ import os
 current_directory = os.path.dirname(os.path.abspath(__file__))
 library_file = os.path.join(current_directory, 'library.csv')
 
+
 def display_books():
     with open(library_file, 'r') as file:
         reader = csv.reader(file)
 
-        next(reader) # skip header row
-        print(f'{"Author":<20} | {"Title":<20} | {"Edition":<8} | {"Status":<10} | {"Due Date":<10}')
-        print('-' * 80)
+        # Display header section
+        next(reader) # skip first row
+        print(f'\n{"Index":<5} | {"Author-Last":<20} | {"Author-First":<20} | {"Title":<19} | {"Edition":<8} | {"Status":<10} | {"Due Date":<10}')
+        print('-' * 110)
 
-        for row in reader:
-            print(f'{row[0][:20]:<20} | {row[1][:20]:<20} | {row[2]:<8} | {row[3]:<10} | {row[4]:<10}')
+        # Display library content
+        for index, row in enumerate(reader):
+            print(f'{index:<5} | {row[0][:20]:<20} | {row[1][:20]:<20} | {row[2][:20]:<20}| {row[3]:<8} | {row[4]:<10} | {row[5]:<10}')
 
 
 def main():
@@ -44,6 +47,7 @@ def main():
     else:
         print('Invalid choice. Please try again.')
         # loop back to start???
+
 
 if __name__ == '__main__':
     main()
