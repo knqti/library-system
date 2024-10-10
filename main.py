@@ -25,14 +25,18 @@ def check_out_book(library_file):
         user_check_out = input('\n>>> Select the Index number to check out (x to main menu): ').strip().lower()
 
         for index, row in enumerate(reader):
-
+            
+            # Exit the function
             if user_check_out == 'x':
-                # Exit function
                 return user_check_out
-        
+
+            # Check out book
             elif index == int(user_check_out):
                 print(f'\nChecking out:')
-                print(f'{row[2]} by {row[0]}, {row[1]}')    
+                print(f'{row[2]} by {row[0]}, {row[1]}')
+
+                # UPDATE CSV FILE
+
                 return user_check_out
 
 
