@@ -31,18 +31,12 @@ def update_dictionary(library_file, book_dictionary):
     return book_dictionary
 
 
-def display_books(library_file, book_dictionary):
-    # with open(library_file, 'r') as file:
-    #     reader = csv.reader(file)
-
-        # Display library content
-        # for index, row in enumerate(reader):
-        #     print(f'{index:<5} | {row[0][:20]:<20} | {row[1][:20]:<20} | {row[2][:20]:<20}| {row[3]:<8} | {row[4]:<15} | {row[5]:<10}')
-
+def display_books(book_dictionary):
     # Display header section
     print(f'\n{"Index":<5} | {"Author-Last":<20} | {"Author-First":<20} | {"Title":<19} | {"Edition":<8} | {"Status":<15} | {"Due Date":<10}')
     print('-' * 115)
 
+    # Display books
     for book_index, book in book_dictionary.items():
         print(f'{book_index:<5} | {book.author_last[:20]:<20} | {book.author_first[:20]:<20} | {book.book_title[:20]:<20} | {book.book_edition:<8}| {book.book_status:<15} | {book.book_due_date:<10}')
 
@@ -163,7 +157,6 @@ def main():
     print('Welcome to the Library!')
 
     # Main menu
-
     while True:
         print('\n== Main Menu ==')
         print('1. Display books')
@@ -175,7 +168,7 @@ def main():
 
         # Display books
         if user_navigation == '1':
-            display_books(library_file, book_dictionary)
+            display_books(book_dictionary)
             continue
 
         # Check out book
