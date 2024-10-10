@@ -2,6 +2,34 @@ import csv
 import os
 from datetime import datetime, timedelta
 
+from my_classes import Book
+
+
+def update_dictionary(library_file, book_dictionary):
+    with open(library_file, 'r') as file:
+        reader = csv.reader(file)
+
+        for index, row in enumerate(reader):
+            # Assign the column values to Book's attributes
+            book = Book(
+                book_index=index,
+                author_last=row[0],
+                author_first=row[1],
+                book_title=row[2],
+                book_edition=row[3],
+                book_status=row[4],
+                book_due_date=row[5]
+            )
+
+            # Store each book into the dictionary using the index as key
+            book_dictionary[book.book_index] = book
+
+    # for book_index, item in book_dictionary.items():
+    #     print(f'\nBook index: {book_index}')
+    #     print(item.__dict__)
+    
+    return book_dictionary
+
 
 def display_books(library_file):
     with open(library_file, 'r') as file:
@@ -36,17 +64,12 @@ def check_out_book(library_file):
         updated_rows = []
 
         for index, row in enumerate(reader):   
-            if index == int(user_input):
+            book_status = row[4]
+            
+            if index == int(user_input) and book_status == 'Available':
                 author_last_name = row[0]
                 author_first_name = row[1]
-                book_title = row[2]
-                book_status = row[4]
-
-                # Unhappy route
-                if book_status != 'Available':
-                    print('\nSorry, that book is not available. Please try again.')
-                    user_input = 'x'
-                    return user_input
+                book_title = row[2]                
 
                 print(f'\nChecking out:')
                 print(f'{book_title} by {author_last_name}, {author_first_name}')
@@ -57,6 +80,12 @@ def check_out_book(library_file):
                 row[4] = book_status
                 row[5]= book_due_date
                 print(f'\nYour book is due on {book_due_date}.')
+            
+            # Unhappy route
+            else:
+                print('\nSorry, that book is not available. Please try again.')
+                user_input = 'x'
+                return user_input
 
             updated_rows.append(row)
 
@@ -123,10 +152,15 @@ def main():
     # Get directory and file
     current_directory = os.path.dirname(os.path.abspath(__file__))
     library_file = os.path.join(current_directory, 'library.csv')
+
+    # Initalize the book dictionary
+    book_dictionary = {}
+    book_dictionary = update_dictionary(library_file, book_dictionary)
     
     print('Welcome to the Library!')
 
     # Main menu
+
     while True:
         print('\n== Main Menu ==')
         print('1. Display books')
