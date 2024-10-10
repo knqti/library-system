@@ -47,13 +47,12 @@ def check_out_book(library_file):
                 print(f'\nChecking out:')
                 print(f'{row[2]} by {row[0]}, {row[1]}')
 
-                for row in reader:
-                    book_status = 'Checked out'
-                    book_due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
+                book_status = 'Checked out'
+                book_due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
 
-                    row[4] = book_status
-                    row[5]= book_due_date
-                    print(f'\nYour book is due on {book_due_date}.')
+                row[4] = book_status
+                row[5]= book_due_date
+                print(f'\nYour book is due on {book_due_date}.')
 
             updated_rows.append(row)
 
