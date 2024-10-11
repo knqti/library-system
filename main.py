@@ -1,9 +1,8 @@
 import os
-from my_functions import check_out_book, display_books, export_dictionary_to_csv, initialize_dictionary, return_book
+from my_functions import check_out_book, display_books, initialize_dictionary, return_book
 
 
 def main():
-
     # Get directory and file
     current_directory = os.path.dirname(os.path.abspath(__file__))
     library_file = os.path.join(current_directory, 'library.csv')
@@ -32,28 +31,14 @@ def main():
 
         # Check out book
         elif user_navigation == '2':
-            check_out_result = check_out_book(book_dictionary, total_books)
-            
-            if check_out_result == 'x':
-                continue
-
-            elif check_out_result == 'success':
-                export_dictionary_to_csv(library_file, book_dictionary)            
-                print('\nCheck out complete!')
-                continue
+            check_out_book(book_dictionary, total_books, library_file)
+            continue
 
         # Return book
         elif user_navigation == '3':
-            return_result = return_book(book_dictionary, total_books)
-
-            if return_result == 'x':
-                continue
-            
-            elif return_result =='success':
-                export_dictionary_to_csv(library_file, book_dictionary)
-                print('\nReturn complete!')
-                continue
-
+            return_book(book_dictionary, total_books, library_file)
+            continue
+        
         # Exit
         elif user_navigation == '4':
             print('Goodbye!')
