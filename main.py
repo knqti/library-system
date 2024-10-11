@@ -1,57 +1,5 @@
-import csv
 import os
-from datetime import datetime, timedelta
-
-from my_functions import check_out_book, display_books, export_dictionary_to_csv, initialize_dictionary
-
-
-def return_book(library_file):
-    user_input = input('\n>>> Select the Index number to return (x to main menu): ').strip().lower()
-
-    # Unhappy route
-    if user_input != 'x' and not 0 <= int(user_input) <= 3:
-        print('\nInvalid choice. Please try again.\nTo return a book, type its Index number and press enter.\nTo go back to the main menu, type "x" and press enter.')
-        user_input = 'x'
-        return user_input
-
-    # Exit to main menu
-    if user_input == 'x':
-        return
-    
-    # Return book
-    with open(library_file, 'r') as file:
-        reader = csv.reader(file)
-
-        updated_rows = []
-
-        for index, row in enumerate(reader):
-            if index == int(user_input):
-                author_last_name = row[0]
-                author_first_name = row[1]
-                book_title = row[2]
-                book_status = row[4]
-
-                # Unhappy route
-                if book_status != 'Checked out':
-                    print('\nSorry, that book is not checked out. Please try again.')
-                    user_input = 'x'
-                    return user_input
-            
-                print('\nReturning:')
-                print(f'{book_title} by {author_last_name}, {author_first_name}')
-
-                row[4] = 'Available'
-                row[5] = ''
-
-            updated_rows.append(row)
-
-    # Update the csv file
-    with open(library_file, 'w',newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(updated_rows)
-
-    user_input = 'success'
-    return user_input
+from my_functions import check_out_book, display_books, export_dictionary_to_csv, initialize_dictionary, return_book
 
 
 def main():
@@ -90,21 +38,22 @@ def main():
                 continue
 
             elif check_out_result == 'success':
-                export_dictionary_to_csv(library_file, book_dictionary)                
-                print('\nCheck-out complete!')
+                export_dictionary_to_csv(library_file, book_dictionary)            
+                print('\nCheck out complete!')
                 continue
 
         # Return book
         elif user_navigation == '3':
-            return_result = return_book(library_file)
+            return_result = return_book(book_dictionary, total_books)
 
             if return_result == 'x':
                 continue
             
             elif return_result =='success':
+                export_dictionary_to_csv(library_file, book_dictionary)
                 print('\nReturn complete!')
                 continue
-        
+
         # Exit
         elif user_navigation == '4':
             print('Goodbye!')
@@ -112,7 +61,7 @@ def main():
         
         else:
             print('Invalid choice. Please try again.')
-            print('Type a number that matches a choice listed. Then press enter.')
+            print('Type a number that matches a choice listed, then press enter.')
             continue
 
 
