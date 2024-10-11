@@ -2,97 +2,7 @@ import csv
 import os
 from datetime import datetime, timedelta
 
-from my_classes import Book
-
-
-def update_dictionary(library_file, book_dictionary):
-    with open(library_file, 'r') as file:
-        reader = csv.reader(file)
-
-        for index, row in enumerate(reader):
-            # Assign the column values to Book's attributes
-            book = Book(
-                book_index=index,
-                author_last=row[0],
-                author_first=row[1],
-                book_title=row[2],
-                book_edition=row[3],
-                book_status=row[4],
-                book_due_date=row[5]
-            )
-
-            # Store each book into the dictionary using the index as key
-            book_dictionary[book.book_index] = book
-
-    # for book_index, item in book_dictionary.items():
-    #     print(f'\nBook index: {book_index}')
-    #     print(item.__dict__)
-    
-    return book_dictionary
-
-
-def display_books(book_dictionary):
-    # Display header section
-    print(f'\n{"Index":<5} | {"Author-Last":<20} | {"Author-First":<20} | {"Title":<19} | {"Edition":<8} | {"Status":<15} | {"Due Date":<10}')
-    print('-' * 115)
-
-    # Display books
-    for book_index, book in book_dictionary.items():
-        print(f'{book_index:<5} | {book.author_last[:20]:<20} | {book.author_first[:20]:<20} | {book.book_title[:20]:<20} | {book.book_edition:<8}| {book.book_status:<15} | {book.book_due_date:<10}')
-
-
-def check_out_book(library_file):
-    user_input = input('\n>>> Select the Index number to check out (x to main menu): ').strip().lower()
-
-    # Unhappy route
-    if user_input != 'x' and not 0<= int(user_input) <=3:
-        print('\nInvalid choice. Please try again.\nTo check out a book, type its Index number and press enter.\nTo go back to the main menu, type "x" and press enter.')
-        user_input = 'x'
-        return user_input
-    
-    # Exit to main menu
-    if user_input == 'x':
-        return user_input
-    
-    # Check out book
-    with open(library_file, 'r') as file:
-        reader = csv.reader(file)
-        
-        updated_rows = []
-
-        for index, row in enumerate(reader):   
-            book_status = row[4]
-            
-            if index == int(user_input) and book_status == 'Available':
-                author_last_name = row[0]
-                author_first_name = row[1]
-                book_title = row[2]                
-
-                print(f'\nChecking out:')
-                print(f'{book_title} by {author_last_name}, {author_first_name}')
-
-                book_status = 'Checked out'
-                book_due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
-
-                row[4] = book_status
-                row[5]= book_due_date
-                print(f'\nYour book is due on {book_due_date}.')
-            
-            # Unhappy route
-            else:
-                print('\nSorry, that book is not available. Please try again.')
-                user_input = 'x'
-                return user_input
-
-            updated_rows.append(row)
-
-    # Update the csv file
-    with open(library_file, 'w',newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(updated_rows)
-
-    user_input = 'success'
-    return user_input
+from my_functions import check_out_book, display_books, export_dictionary_to_csv, initialize_dictionary
 
 
 def return_book(library_file):
@@ -150,9 +60,10 @@ def main():
     current_directory = os.path.dirname(os.path.abspath(__file__))
     library_file = os.path.join(current_directory, 'library.csv')
 
-    # Initalize the book dictionary
+    # Initalize the dictionary of books
     book_dictionary = {}
-    book_dictionary = update_dictionary(library_file, book_dictionary)
+    book_dictionary = initialize_dictionary(library_file, book_dictionary)
+    total_books = len(book_dictionary)
     
     print('Welcome to the Library!')
 
@@ -173,12 +84,13 @@ def main():
 
         # Check out book
         elif user_navigation == '2':
-            check_out_result = check_out_book(library_file)
+            check_out_result = check_out_book(book_dictionary, total_books)
             
             if check_out_result == 'x':
                 continue
 
             elif check_out_result == 'success':
+                export_dictionary_to_csv(library_file, book_dictionary)                
                 print('\nCheck-out complete!')
                 continue
 
